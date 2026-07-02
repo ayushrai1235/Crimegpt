@@ -1,0 +1,15 @@
+{
+  "name": "crimegpt-graph-service",
+  "version": "1.0.0",
+  "description": "Catalyst Advanced I/O function to query Neo4j for network graphs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "neo4j-driver": "^5.14.0",
+    "dotenv": "^16.4.5"
+  }
+}

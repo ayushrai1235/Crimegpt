@@ -1,0 +1,28 @@
+{
+  "project_id": "your_catalyst_project_id_here",
+  "name": "crimegpt",
+  "functions": {
+    "functions_directory": "functions",
+    "services": [
+      {
+        "name": "crimegpt-core-service",
+        "type": "advancedio"
+      },
+      {
+        "name": "crimegpt-chat-service",
+        "type": "advancedio"
+      },
+      {
+        "name": "crimegpt-graph-service",
+        "type": "advancedio"
+      },
+      {
+        "name": "fir-ingestion-pipeline",
+        "type": "event"
+      }
+    ]
+  },
+  "client": {
+    "source": "client"
+  }
+}
