@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Network } from 'vis-network';
-import { ShieldAlert, Network as NetworkIcon, Filter } from 'lucide-react';
+import type { Options } from 'vis-network';
+import { Brain, ShieldAlert, Network as NetworkIcon, Filter } from 'lucide-react';
 import Link from 'next/link';
 
 export default function CriminalNetwork() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [network, setNetwork] = useState<Network | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export default function CriminalNetwork() {
         const data = await res.json();
 
         if (containerRef.current) {
-          const options = {
+          const options: Options = {
             nodes: {
               shape: 'dot',
               size: 20,
@@ -30,7 +30,7 @@ export default function CriminalNetwork() {
               width: 2,
               color: { color: '#475569', highlight: '#3b82f6' },
               font: { color: '#94a3b8', size: 12, align: 'middle' },
-              smooth: { type: 'continuous' }
+              smooth: { enabled: true, type: 'continuous', roundness: 0.45 }
             },
             groups: {
               Person: { color: { background: '#ef4444', border: '#991b1b' }, shape: 'icon', icon: { face: 'FontAwesome', code: '\uf007', size: 50, color: '#ef4444' } },
@@ -43,8 +43,7 @@ export default function CriminalNetwork() {
             }
           };
 
-          const newNetwork = new Network(containerRef.current, data, options);
-          setNetwork(newNetwork);
+          new Network(containerRef.current, data, options);
         }
       } catch (error) {
         console.error('Failed to load network graph', error);
@@ -70,6 +69,13 @@ export default function CriminalNetwork() {
           </div>
         </div>
         <div className="flex gap-3">
+          <Link
+            href="/insights"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition shadow-sm"
+          >
+            <Brain size={16} className="text-amber-400" />
+            <span className="text-sm font-medium">Insights</span>
+          </Link>
           <button className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition shadow-sm">
             <Filter size={16} className="text-blue-400" />
             <span className="text-sm font-medium">Filter Nodes</span>

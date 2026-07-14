@@ -1,0 +1,16 @@
+{
+  "name": "crimegpt-insights-service",
+  "version": "1.0.0",
+  "description": "Catalyst Advanced I/O function for sociological insights and offender profiling",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2",
+    "neo4j-driver": "^5.14.0"
+  }
+}

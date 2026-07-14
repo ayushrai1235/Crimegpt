@@ -17,6 +17,10 @@
         "type": "advancedio"
       },
       {
+        "name": "crimegpt-insights-service",
+        "type": "advancedio"
+      },
+      {
         "name": "fir-ingestion-pipeline",
         "type": "event"
       }

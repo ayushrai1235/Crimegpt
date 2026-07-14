@@ -1,13 +1,56 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Mic, MicOff, Send, Download, Globe, ShieldAlert, FileText } from 'lucide-react';
+import { Brain, GitBranch, Mic, Send, Download, Globe, ShieldAlert, FileText } from 'lucide-react';
 import { jsPDF } from 'jspdf';
+import Link from 'next/link';
+
+interface EvidenceCitation {
+  CrimeNo?: string;
+  id?: string;
+  [key: string]: unknown;
+}
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
-  citations?: any[];
+  citations?: EvidenceCitation[];
+}
+
+interface ChatResponse {
+  reply?: string;
+  citations?: EvidenceCitation[];
+}
+
+interface SpeechRecognitionResultEventLike {
+  resultIndex: number;
+  results: {
+    length: number;
+    [index: number]: {
+      [index: number]: {
+        transcript: string;
+      };
+    };
+  };
+}
+
+interface SpeechRecognitionErrorEventLike {
+  error: string;
+}
+
+interface SpeechRecognitionLike {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: ((event: SpeechRecognitionResultEventLike) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEventLike) => void) | null;
+  start: () => void;
+  stop: () => void;
+}
+
+interface SpeechRecognitionWindow extends Window {
+  SpeechRecognition?: new () => SpeechRecognitionLike;
+  webkitSpeechRecognition?: new () => SpeechRecognitionLike;
 }
 
 export default function CrimeGPTChat() {
@@ -17,7 +60,7 @@ export default function CrimeGPTChat() {
   const [language, setLanguage] = useState<'en' | 'kn'>('en');
   const [isLoading, setIsLoading] = useState(false);
   
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -27,13 +70,17 @@ export default function CrimeGPTChat() {
 
   useEffect(() => {
     // Initialize Web Speech API
-    if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-      const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (typeof window !== 'undefined') {
+      const speechWindow = window as SpeechRecognitionWindow;
+      const SpeechRecognition = speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
+
+      if (!SpeechRecognition) return;
+
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = true;
       
-      recognitionRef.current.onresult = (event: any) => {
+      recognitionRef.current.onresult = (event: SpeechRecognitionResultEventLike) => {
         let transcript = '';
         for (let i = event.resultIndex; i < event.results.length; i++) {
           transcript += event.results[i][0].transcript;
@@ -41,7 +88,7 @@ export default function CrimeGPTChat() {
         setInput(prev => prev + ' ' + transcript);
       };
 
-      recognitionRef.current.onerror = (event: any) => {
+      recognitionRef.current.onerror = (event: SpeechRecognitionErrorEventLike) => {
         console.error('Speech recognition error', event.error);
         setIsListening(false);
       };
@@ -84,10 +131,10 @@ export default function CrimeGPTChat() {
         })
       });
 
-      const data = await res.json();
+      const data = (await res.json()) as ChatResponse;
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: data.reply,
+        content: data.reply || 'Information not found in the current records.',
         citations: data.citations
       }]);
     } catch (error) {
@@ -112,10 +159,10 @@ export default function CrimeGPTChat() {
       const isUser = msg.role === 'user';
       const roleText = isUser ? 'Investigating Officer: ' : 'CrimeGPT AI: ';
       
-      doc.setFont(undefined, 'bold');
+      doc.setFont('helvetica', 'bold');
       doc.text(roleText, 10, y);
       
-      doc.setFont(undefined, 'normal');
+      doc.setFont('helvetica', 'normal');
       const splitText = doc.splitTextToSize(msg.content, 180);
       doc.text(splitText, 10, y + 6);
       y += (splitText.length * 5) + 12;
@@ -143,6 +190,20 @@ export default function CrimeGPTChat() {
           </div>
         </div>
         <div className="flex gap-3">
+          <Link
+            href="/network"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-800/80 hover:bg-slate-700 rounded-lg border border-slate-700 transition-all duration-300 shadow-sm"
+          >
+            <GitBranch size={16} className="text-emerald-400" />
+            <span className="text-sm font-medium">Network</span>
+          </Link>
+          <Link
+            href="/insights"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-800/80 hover:bg-slate-700 rounded-lg border border-slate-700 transition-all duration-300 shadow-sm"
+          >
+            <Brain size={16} className="text-amber-400" />
+            <span className="text-sm font-medium">Insights</span>
+          </Link>
           <button 
             onClick={() => setLanguage(prev => prev === 'en' ? 'kn' : 'en')}
             className="flex items-center gap-2 px-4 py-2 bg-slate-800/80 hover:bg-slate-700 rounded-lg border border-slate-700 transition-all duration-300 shadow-sm"
@@ -173,10 +234,10 @@ export default function CrimeGPTChat() {
             </div>
             <div className="flex gap-4 w-full">
               <button onClick={() => setInput("Identify repeat offender networks operating in Bangalore over the last year.")} className="flex-1 p-4 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-blue-500/50 hover:bg-slate-800 transition text-sm text-left">
-                "Identify repeat offender networks operating in Bangalore over the last year."
+                Identify repeat offender networks operating in Bangalore over the last year.
               </button>
               <button onClick={() => setInput("Show me all active zero FIRs related to cybercrime.")} className="flex-1 p-4 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-blue-500/50 hover:bg-slate-800 transition text-sm text-left">
-                "Show me all active zero FIRs related to cybercrime."
+                Show me all active zero FIRs related to cybercrime.
               </button>
             </div>
           </div>
