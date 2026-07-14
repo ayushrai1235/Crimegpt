@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Brain, GitBranch, Mic, Send, Download, Globe, ShieldAlert, FileText } from 'lucide-react';
+import { Brain, GitBranch, Mic, Send, Download, Globe, ShieldAlert, FileText, BarChart3 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import Link from 'next/link';
 
@@ -203,6 +203,13 @@ export default function CrimeGPTChat() {
           >
             <Brain size={16} className="text-amber-400" />
             <span className="text-sm font-medium">Insights</span>
+          </Link>
+          <Link
+            href="/analytics"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-800/80 hover:bg-slate-700 rounded-lg border border-slate-700 transition-all duration-300 shadow-sm"
+          >
+            <BarChart3 size={16} className="text-violet-400" />
+            <span className="text-sm font-medium">Analytics</span>
           </Link>
           <button 
             onClick={() => setLanguage(prev => prev === 'en' ? 'kn' : 'en')}

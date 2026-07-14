@@ -425,6 +425,13 @@ export default function InsightsPage() {
               <ShieldAlert size={16} />
               CrimeGPT
             </Link>
+            <Link
+              href="/analytics"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-300 transition hover:border-violet-400 hover:text-violet-300"
+            >
+              <BarChart3 size={16} />
+              Analytics
+            </Link>
           </nav>
         </div>
       </header>

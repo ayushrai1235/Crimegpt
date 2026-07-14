@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Network } from 'vis-network';
 import type { Options } from 'vis-network';
-import { Brain, ShieldAlert, Network as NetworkIcon, Filter } from 'lucide-react';
+import { Brain, ShieldAlert, Network as NetworkIcon, Filter, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function CriminalNetwork() {
@@ -75,6 +75,13 @@ export default function CriminalNetwork() {
           >
             <Brain size={16} className="text-amber-400" />
             <span className="text-sm font-medium">Insights</span>
+          </Link>
+          <Link
+            href="/analytics"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition shadow-sm"
+          >
+            <BarChart3 size={16} className="text-violet-400" />
+            <span className="text-sm font-medium">Analytics</span>
           </Link>
           <button className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition shadow-sm">
             <Filter size={16} className="text-blue-400" />
