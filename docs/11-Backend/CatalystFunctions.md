@@ -1,58 +1,44 @@
-# Catalyst Functions Architecture
+# Catalyst Functions Documentation
 
-## Overview
-The **Catalyst Functions** document details the backend compute layer of the **CrimeGPT** platform. Instead of managing a monolithic Node.js or Python server on AWS EC2, the architecture utilizes **Zoho Catalyst's serverless functions**. This approach guarantees horizontal scalability and zero server maintenance.
+## 1. Overview
+The backend of CrimeGPT is entirely hosted on Zoho Catalyst. Instead of deploying disparate microservices on Docker/Kubernetes, the platform uses a unified Catalyst Advanced I/O function that routes requests to logical internal modules.
 
----
+## 2. Purpose
+To leverage Catalyst's serverless autoscaling and integrated ecosystem (Data Store, File Store, Cron, Cache) for a streamlined, high-performance backend.
 
-## 1. Types of Catalyst Functions Used
+## 3. Functional Requirements
+The backend must handle PDF uploads, AI orchestration, database queries, and analytics generation.
 
-Catalyst offers several function types; CrimeGPT leverages three specific types to handle different workloads.
+## 4. Technical Design
 
-### 1.1. Advanced I/O Functions (The API Gateway)
-- **Language:** Node.js (Express framework).
-- **Purpose:** Handling standard, synchronous HTTP requests from the Next.js frontend.
-- **Use Cases:**
-  - `crimegpt-chat-service`: Handles streaming the LLM response to the user.
-  - `crimegpt-core-service`: Handles CRUD operations for case management.
-  - `crimegpt-graph-service`: Translates HTTP requests into Neo4j Cypher queries.
+### Core Modules
 
-### 1.2. Event Functions (Asynchronous Pipelines)
-- **Language:** Python (Preferred for NLP) or Node.js.
-- **Purpose:** Executing heavy background tasks triggered by system events without blocking the user interface.
-- **Use Cases:**
-  - `fir-ingestion-pipeline`: Triggered automatically when a new PDF is dropped into the **Catalyst File Store**. It runs OCR, generates vector embeddings, and updates the Neo4j graph.
+**1. Upload Module (`/api/upload`)**
+- **Purpose**: Processes raw FIR PDFs.
+- **Internal Workflow**: Receives file -> Uploads to Catalyst File Store -> Calls Gemini for extraction -> Writes to Catalyst Data Store -> Generates Embedding -> Upserts to Pinecone -> Updates Neo4j.
+- **Performance**: High latency (async event recommended).
 
-### 1.3. Cron Functions (Scheduled Jobs)
-- **Language:** Python (Preferred for Machine Learning).
-- **Purpose:** Executing scheduled tasks at specific intervals.
-- **Use Cases:**
-  - `daily-heatmap-generator`: Runs at 00:00 to execute the ML clustering algorithms and cache the predictive geo-data.
-  - `anomaly-detector`: Runs every 15 minutes to compare real-time data against historical baselines.
+**2. AI Orchestrator Module (`/api/chat`)**
+- **Purpose**: Central intelligence router.
+- **Internal Workflow**: Receives query -> Detects intent -> Queries Data Store/Pinecone/Neo4j -> Prompts Gemini -> Validates citations -> Returns response.
 
-## 2. Directory Structure Strategy
+**3. Graph Module (`/api/graph`)**
+- **Purpose**: Translates frontend requests into Cypher queries for Neo4j.
+- **Internal Workflow**: Receives FIR ID -> Queries Neo4j for surrounding nodes -> Formats as Vis.js JSON.
 
-Because different Catalyst Functions can be written in different languages, the codebase maintains clear separation.
+**4. Analytics Module (`/api/analytics`)**
+- **Purpose**: Powers the dashboard.
+- **Internal Workflow**: Queries Catalyst Data Store -> Groups by District/Crime Type -> Caches result in Catalyst Cache -> Returns payload.
 
-```text
-/catalyst-backend
-  /functions
-    /crimegpt-chat-service (Node.js)
-      index.js
-      package.json
-    /fir-ingestion-pipeline (Python)
-      main.py
-      requirements.txt
-    /daily-heatmap-generator (Python)
-      main.py
-      requirements.txt
-  catalyst.json
-```
+**5. Prediction Module (`/api/predict`)**
+- **Purpose**: Generates hotspot heatmaps.
+- **Internal Workflow**: Runs clustering logic on historical coordinates.
 
-## 3. Deployment and Environment Variables
-- All functions are deployed together using the `catalyst deploy` CLI command.
-- **Secrets:** API keys (OpenAI, Neo4j, Pinecone) are never hardcoded in the function code. They are configured in the Catalyst Web Console and accessed securely at runtime (e.g., `process.env.OPENAI_API_KEY` or `os.environ.get('NEO4J_URI')`).
+## 5. Data Flow
+See `DataFlow.md` for end-to-end sequences.
 
-## 4. Cold Starts Mitigation
-Serverless functions experience "cold starts" (a delay of 1-3 seconds when a function wakes up after a period of inactivity).
-- **Mitigation:** For critical, user-facing Advanced I/O functions (like the Chat API), Catalyst allows configuring "Warm Instances" or "Concurrency Limits" (depending on the pricing tier) to ensure a minimum number of function instances are always running, guaranteeing immediate sub-second response times for the officers.
+## 6. Edge Cases
+- **Catalyst Limits**: The Advanced I/O function has execution time limits. Long-running tasks (like batch FIR uploads) should be offloaded to Catalyst Event Functions.
+
+## 7. Future Enhancements
+- Implement Catalyst Pipelines to fully automate the CI/CD deployment of these modules.

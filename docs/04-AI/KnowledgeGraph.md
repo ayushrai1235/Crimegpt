@@ -1,56 +1,60 @@
-# Knowledge Graph Integration
+# Knowledge Graph Intelligence
 
-## Overview
-The **Knowledge Graph** document explains how the **CrimeGPT** platform models and queries the complex relationships between criminal entities. While the **Catalyst Data Store** handles structured metadata, the **Neo4j Graph Database** is the engine that allows investigators to say, "Show me how these five suspects are connected."
+## 1. Overview
+CrimeGPT utilizes Neo4j AuraDB strictly as a graph engine to uncover hidden relationships between disparate cases. It does *not* act as the primary database (which is handled by Catalyst Data Store), but rather as an intelligence layer to connect entities like suspects, bank accounts, and phone numbers.
 
----
+## 2. Purpose
+To visually and algorithmically identify organized crime syndicates, repeat offenders, and money trails that would be impossible to spot in a traditional relational database.
 
-## 1. The Value of the Graph in Law Enforcement
+## 3. Functional Requirements
+- **Entity Extraction**: Automatically parse FIRs to generate Graph Nodes (Person, Account, Phone, Vehicle) and Edges (OWNS, USED_IN, ACCUSED_IN).
+- **Interactive Visualization**: Display a force-directed graph in the Investigation Workspace.
+- **AI Orchestrator Integration**: Allow the AI to query the graph in natural language to answer complex network questions.
 
-Organized crime relies on networks. A traditional SQL database requires knowing exactly what you are looking for. A graph database allows you to discover connections you didn't know existed.
+## 4. Technical Design
 
-- **Relational DB Question:** "List all FIRs associated with Suspect A."
-- **Graph DB Question:** "Find the shortest path of association between Suspect A and Suspect Z, based on shared accomplices, vehicles, or addresses."
+### Node Schema
+- `FIR`: The central incident node.
+- `Person`: Tagged with roles (Accused, Victim, Complainant).
+- `Phone`: Phone numbers extracted via regex.
+- `BankAccount`: Extracted financial identifiers.
+- `Vehicle`: Extracted license plates.
+- `Location`: Extracted crime scenes.
 
-## 2. Graph Construction Pipeline
+### Edge Schema
+- `(Person)-[:ACCUSED_IN]->(FIR)`
+- `(Person)-[:USES_PHONE]->(Phone)`
+- `(FIR)-[:INVOLVES_ACCOUNT]->(BankAccount)`
+- `(Person)-[:KNOWS]->(Person)` *(Inferred from co-accused status)*
 
-The graph is not built manually; it is constructed automatically during the data ingestion phase.
+## 5. Example Cypher Queries for the AI Orchestrator
 
-1. **Trigger:** A new FIR PDF is uploaded to the **Catalyst File Store**.
-2. **NLP Extraction:** A **Catalyst Function** runs Named Entity Recognition (NER) to extract:
-   - Persons (Suspects, Victims)
-   - Locations (Addresses, Landmarks)
-   - Objects (Vehicles, Weapons)
-   - Communications (Phone Numbers)
-3. **Graph Merging:** The Catalyst Function executes a Cypher `MERGE` query against Neo4j.
-   - If "Ravi Kumar" already exists in the graph, it links the new FIR to the existing node.
-   - If not, it creates a new node.
+**1. Find Repeat Offenders (Multi-Case Accused)**
+```cypher
+MATCH (p:Person)-[:ACCUSED_IN]->(f:FIR)
+WITH p, count(f) as case_count, collect(f.id) as cases
+WHERE case_count > 1
+RETURN p.name, case_count, cases
+ORDER BY case_count DESC
+```
 
-## 3. AI Graph Agent (Text-to-Cypher)
+**2. Discover Shared Bank Accounts (Money Laundering Ring)**
+```cypher
+MATCH (f1:FIR)-[:INVOLVES_ACCOUNT]->(a:BankAccount)<-[:INVOLVES_ACCOUNT]-(f2:FIR)
+WHERE f1.id <> f2.id
+RETURN a.account_number, collect(f1.id) as linked_cases
+```
 
-To allow officers to query the graph using natural language, we implement a specialized **Graph Agent** within the Catalyst AI orchestrator.
+**3. Identify Criminal Organizations (Co-Accused Networks)**
+```cypher
+MATCH (p1:Person)-[:ACCUSED_IN]->(f:FIR)<-[:ACCUSED_IN]-(p2:Person)
+WHERE p1.name <> p2.name
+RETURN p1.name, p2.name, count(f) as shared_crimes
+ORDER BY shared_crimes DESC
+```
 
-### 3.1. How it works
-1. **User Query:** "Who are the common associates between Ravi and Suresh?"
-2. **Intent Routing:** The system routes this to the Graph Agent.
-3. **Text-to-Cypher:** An LLM is prompted with the Graph Schema (Node labels and Edge types) and the user's query. The LLM translates the English query into a database query (Cypher).
-   *Generated Cypher:* `MATCH (p1:Person {name:"Ravi"})-[:ACCUSED_IN]->(f:FIR)<-[:ACCUSED_IN]-(p2:Person), (p3:Person {name:"Suresh"})-[:ACCUSED_IN]->(f2:FIR)<-[:ACCUSED_IN]-(p2) RETURN DISTINCT p2.name`
-4. **Execution:** The Catalyst Function executes this Cypher query against Neo4j securely.
-5. **Natural Language Translation:** The raw JSON result from Neo4j is passed back to the LLM to translate into a human-readable sentence.
-   *Final Output:* "Ravi and Suresh do not have any shared FIRs directly, but they both share a common accomplice named 'Mahesh', who was arrested with Ravi in 2021 and Suresh in 2023."
+## 6. Edge Cases
+- **Entity Resolution**: "John Doe" in FIR 1 might be different from "John Doe" in FIR 2. The graph merge logic requires a secondary identifier (like Phone Number or Aadhar) before collapsing two Person nodes into one.
 
-## 4. Visualizing the Graph (Frontend)
-
-When an officer asks to "Visualize the network for Suspect X":
-1. The Catalyst Function executes a graph query to fetch a 2-hop or 3-hop network around Suspect X.
-2. It returns a standardized JSON structure (Nodes and Edges) to the Next.js frontend.
-3. The frontend uses a library like **Vis.js** or **React Flow** to render an interactive web, allowing the officer to drag, zoom, and click on connecting lines to view the underlying FIR evidence.
-
-## 5. Security & RBAC in the Graph
-
-- The Neo4j database does not inherently know about Zoho Catalyst user roles.
-- **Enforcement:** The **Catalyst Function** acting as the Graph Agent MUST inject jurisdiction filters into the Cypher query. 
-- *Example:* If an Inspector from Station A asks for a network graph, the Catalyst Function modifies the generated Cypher query to append `WHERE f.station_id = 'Station_A'` to ensure they only see connections relevant to their clearance level (unless overridden by an active investigation flag).
-
----
-**Next Steps:** Review the [RAG Architecture](./RAGArchitecture.md) to understand how the system retrieves textual evidence.
+## 7. Future Enhancements
+- Implement Graph Neural Networks (GNNs) for automated link prediction to guess missing relationships before they are explicitly found in an FIR.

@@ -2,9 +2,7 @@
     "functions":  {
                       "source":  "functions",
                       "targets":  [
-                                      "crimegpt-chat-service",
-                                      "crimegpt-graph-service",
-                                      "crimegpt-insights-service",
+                                      "crimegpt-api",
                                       "fir-ingestion-pipeline"
                                   ]
                   },

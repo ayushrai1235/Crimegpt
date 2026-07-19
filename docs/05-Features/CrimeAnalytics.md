@@ -1,32 +1,31 @@
-# Feature: Crime Analytics Dashboard
+# Crime Analytics Dashboard
 
-## 1. Purpose
-The **Crime Analytics Dashboard** provides high-level, aggregate intelligence to police leadership. Instead of focusing on individual cases, it focuses on macro-trends, clearance rates, and resource allocation.
+## 1. Overview
+The Crime Analytics Dashboard provides a high-level, aggregate view of crime data across districts. It is the entry point for supervisors and analysts to gauge overall law enforcement performance and crime trends.
 
-## 2. Target Users
-- District Superintendents of Police (DSPs)
-- State Commissioners
+## 2. Purpose
+To transform thousands of individual FIRs into digestible, actionable intelligence via charts, rankings, and alerts.
 
-## 3. Core Visualizations (Widgets)
-- **Crime Rate Timeline:** A line graph showing the volume of reported crimes over the last 12 months, filterable by Crime Type (e.g., Cyber, Property, Violent).
-- **Clearance Rate Gauge:** A percentage indicator showing how many cases have been solved versus how many remain open.
-- **Jurisdictional Comparison:** A bar chart comparing crime rates across different Police Stations within a zone.
-- **M.O. Breakdown:** A pie chart breaking down the Modus Operandi for a specific crime type (e.g., showing that 40% of vehicle thefts happen via "Duplicate Keys").
+## 3. Functional Requirements
+The dashboard must include the following widgets:
+- **Today's FIRs**: A real-time count of FIRs uploaded today.
+- **Crime Distribution**: A pie chart breaking down cases by category (Theft, Assault, Cyber).
+- **Crime Heatmap**: A macro-level map showing overall density across the state/district.
+- **District Rankings**: A leaderboard of districts by crime volume or resolution rate.
+- **Repeat Offenders**: A list of individuals flagged by the AI Orchestrator as highly active.
+- **AI Alerts**: Real-time notifications of emerging hotspots or suspicious network growth.
+- **Crime Trends**: A line chart mapping crime frequency over the last 30 days.
 
-## 4. Technical Workflow
+## 4. Technical Design
+- **Frontend**: Utilizes `Recharts` or `Chart.js` for data visualization.
+- **Backend**: The Analytics Module within the Catalyst Backend queries the Catalyst Data Store.
+- **Performance**: To prevent slow database `GROUP BY` queries on every page load, the Analytics Module caches the dashboard payload in **Catalyst Cache** every 15 minutes.
 
-### 4.1. The Performance Problem
-Calculating these statistics in real-time requires running complex SQL `GROUP BY` and `COUNT` queries across millions of rows in the `FIR_Metadata` table. If the Commissioner loads the dashboard, executing these queries synchronously would take 10+ seconds, resulting in a poor UX.
+## 5. Data Flow
+Catalyst Data Store -> Catalyst Analytics Function -> Catalyst Cache -> Next.js Dashboard.
 
-### 4.2. The Catalyst Cache Solution
-- A **Catalyst Cron** job runs at 01:00 AM IST every day.
-- This job executes all the heavy analytical SQL queries against the **Catalyst Data Store**.
-- The resulting structured JSON object (containing all the chart data) is pushed into **Catalyst Cache** with the key `global_analytics_dashboard`.
-- When the Commissioner logs in at 9:00 AM, the frontend simply requests this cached JSON. Load time is < 50ms.
+## 6. Edge Cases
+- **Stale Cache**: If a high-priority alert is generated, the Catalyst Event Function invalidates the dashboard cache immediately so supervisors see the alert instantly.
 
-## 5. Real-Time Overrides
-While the dashboard relies on 24-hour cached data, certain widgets (like "Active Critical Incidents") bypass the cache and query the Data Store directly to ensure absolute real-time accuracy for emergencies.
-
-## 6. Frontend Libraries
-- The Next.js frontend utilizes libraries like **Recharts** or **Chart.js** to render the JSON data into responsive, interactive SVGs. 
-- The UI must support exporting these charts directly to PDF or PNG for official KSP press briefings.
+## 7. Future Enhancements
+- Implement real-time WebSocket connections (or Catalyst Notifications) for live-updating charts without page refreshes.
