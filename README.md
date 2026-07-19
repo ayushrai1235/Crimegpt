@@ -86,7 +86,7 @@ graph TD
     end
 
     %% Databases & External APIs
-    Gemini[Google Gemini 2.0 Flash\nLLM & Embeddings]
+    Gemini[Google Gemini 3.5 Flash\nLLM & Embeddings]
     Pinecone[(Pinecone Vector DB\nSemantic Search)]
     Neo4j[(Neo4j AuraDB\nGraph Database)]
     CatalystDB[(Catalyst Data Store\nSQL)]
