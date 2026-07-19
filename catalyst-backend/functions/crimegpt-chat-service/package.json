@@ -2,6 +2,7 @@
   "name": "crimegpt-chat-service",
   "version": "1.0.0",
   "description": "Catalyst Advanced I/O function for Gemini 3.5 Flash RAG",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"

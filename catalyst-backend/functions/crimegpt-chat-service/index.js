@@ -1,10 +1,12 @@
-const express = require('express');
-const cors = require('cors');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-const { Pinecone } = require('@pinecone-database/pinecone');
-const catalyst = require('zcatalyst-sdk-node');
+import express from 'express';
+import cors from 'cors';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import { Pinecone } from '@pinecone-database/pinecone';
+import catalyst from 'zcatalyst-sdk-node';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
 
-require('dotenv').config({ path: 'E:\\Ksp datathon\\catalyst-backend\\.env' });
+dotenv.config({ path: 'E:\\Ksp datathon\\catalyst-backend\\.env' });
 
 const app = express();
 app.use(cors());
@@ -150,13 +152,14 @@ app.post('/seed-db', async (req, res) => {
     }
 });
 
-if (require.main === module) {
+const isMain = process.argv[1] === fileURLToPath(import.meta.url);
+if (isMain) {
     const port = process.env.CHAT_PORT || 3001;
     app.listen(port, () => {
         console.log(`crimegpt-chat-service listening on port ${port}`);
     });
 }
 
-module.exports = app;
+export default app;
 
 

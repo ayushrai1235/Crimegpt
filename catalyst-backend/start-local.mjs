@@ -11,8 +11,12 @@
  *   - crimegpt-insights-service  → 3003
  */
 
-const { fork } = require('child_process');
-const path = require('path');
+import { fork } from 'child_process';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const services = [
     { name: 'crimegpt-chat-service',     port: 3001 },

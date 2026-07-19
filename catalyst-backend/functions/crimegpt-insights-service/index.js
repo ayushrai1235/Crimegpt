@@ -1,9 +1,11 @@
-const express = require('express');
-const cors = require('cors');
-const neo4j = require('neo4j-driver');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+import express from 'express';
+import cors from 'cors';
+import neo4j from 'neo4j-driver';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
 
-require('dotenv').config({ path: 'E:\\Ksp datathon\\catalyst-backend\\.env' });
+dotenv.config({ path: 'E:\\Ksp datathon\\catalyst-backend\\.env' });
 
 const app = express();
 app.use(cors());
@@ -559,13 +561,14 @@ ${JSON.stringify(hydratedProfile, null, 2)}`;
     }
 });
 
-if (require.main === module) {
+const isMain = process.argv[1] === fileURLToPath(import.meta.url);
+if (isMain) {
     const port = process.env.PORT || 3003;
     app.listen(port, () => {
         console.log(`crimegpt-insights-service listening on port ${port}`);
     });
 }
 
-module.exports = app;
+export default app;
 
 
