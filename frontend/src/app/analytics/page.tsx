@@ -99,27 +99,27 @@ export default function AnalyticsPage() {
               </h1>
             </div>
           </div>
-          <nav className="flex flex-wrap items-center gap-2 text-sm">
+          <nav className="flex flex-wrap items-center gap-2 md:gap-3 text-sm">
             <Link
               href="/network"
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-300 transition hover:border-emerald-400 hover:text-emerald-300"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 p-2 md:px-3 md:py-2 text-slate-300 transition hover:border-emerald-400 hover:text-emerald-300"
             >
               <GitBranch size={16} />
-              Network
+              <span className="hidden md:inline">Network</span>
             </Link>
             <Link
               href="/insights"
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-300 transition hover:border-amber-400 hover:text-amber-300"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 p-2 md:px-3 md:py-2 text-slate-300 transition hover:border-amber-400 hover:text-amber-300"
             >
               <Brain size={16} />
-              Insights
+              <span className="hidden md:inline">Insights</span>
             </Link>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-300 transition hover:border-blue-400 hover:text-blue-300"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 p-2 md:px-3 md:py-2 text-slate-300 transition hover:border-blue-400 hover:text-blue-300"
             >
               <ShieldAlert size={16} />
-              CrimeGPT
+              <span className="hidden md:inline">CrimeGPT</span>
             </Link>
           </nav>
         </div>

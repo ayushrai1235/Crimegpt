@@ -2,9 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const neo4j = require('neo4j-driver');
 
-if (process.env.ZOHO_CATALYST_ENVIRONMENT === 'Development') {
-    require('dotenv').config();
-}
+require('dotenv').config({ path: 'E:\\Ksp datathon\\catalyst-backend\\.env' });
 
 const app = express();
 app.use(cors());
@@ -59,4 +57,13 @@ app.get('/network', async (req, res) => {
     }
 });
 
+if (require.main === module) {
+    const port = process.env.GRAPH_PORT || 3002;
+    app.listen(port, () => {
+        console.log(`crimegpt-graph-service listening on port ${port}`);
+    });
+}
+
 module.exports = app;
+
+

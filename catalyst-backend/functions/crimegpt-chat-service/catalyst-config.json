@@ -1,3 +1,10 @@
 {
-  "type": "advancedio"
+    "type":  "advancedio",
+    "name":  "crimegpt-chat-service",
+    "deployment":  {
+                       "name":  "crimegpt-chat-service",
+                       "stack":  "node20"
+                   }
 }
+
+

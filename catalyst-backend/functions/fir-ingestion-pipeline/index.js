@@ -2,9 +2,7 @@ const catalyst = require('zcatalyst-sdk-node');
 const neo4j = require('neo4j-driver');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-if (process.env.ZOHO_CATALYST_ENVIRONMENT === 'Development') {
-    require('dotenv').config();
-}
+require('dotenv').config({ path: 'E:\\Ksp datathon\\catalyst-backend\\.env' });
 
 module.exports = async (event, context) => {
     try {
@@ -81,3 +79,5 @@ module.exports = async (event, context) => {
         context.closeWithFailure();
     }
 };
+
+

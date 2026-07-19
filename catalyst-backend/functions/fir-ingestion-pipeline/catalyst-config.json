@@ -1,3 +1,10 @@
 {
-  "type": "event"
+    "type":  "event",
+    "name":  "fir-ingestion-pipeline",
+    "deployment":  {
+                       "name":  "fir-ingestion-pipeline",
+                       "stack":  "node20"
+                   }
 }
+
+

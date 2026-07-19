@@ -189,41 +189,41 @@ export default function CrimeGPTChat() {
             <p className="text-xs text-blue-200/60 uppercase tracking-widest font-semibold">KSP Intelligence Console</p>
           </div>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2 md:gap-3">
           <Link
             href="/network"
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800/80 hover:bg-slate-700 rounded-lg border border-slate-700 transition-all duration-300 shadow-sm"
+            className="flex items-center gap-2 p-2 md:px-4 md:py-2 bg-slate-800/80 hover:bg-slate-700 rounded-lg border border-slate-700 transition-all duration-300 shadow-sm"
           >
             <GitBranch size={16} className="text-emerald-400" />
-            <span className="text-sm font-medium">Network</span>
+            <span className="hidden md:inline text-sm font-medium">Network</span>
           </Link>
           <Link
             href="/insights"
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800/80 hover:bg-slate-700 rounded-lg border border-slate-700 transition-all duration-300 shadow-sm"
+            className="flex items-center gap-2 p-2 md:px-4 md:py-2 bg-slate-800/80 hover:bg-slate-700 rounded-lg border border-slate-700 transition-all duration-300 shadow-sm"
           >
             <Brain size={16} className="text-amber-400" />
-            <span className="text-sm font-medium">Insights</span>
+            <span className="hidden md:inline text-sm font-medium">Insights</span>
           </Link>
           <Link
             href="/analytics"
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800/80 hover:bg-slate-700 rounded-lg border border-slate-700 transition-all duration-300 shadow-sm"
+            className="flex items-center gap-2 p-2 md:px-4 md:py-2 bg-slate-800/80 hover:bg-slate-700 rounded-lg border border-slate-700 transition-all duration-300 shadow-sm"
           >
             <BarChart3 size={16} className="text-violet-400" />
-            <span className="text-sm font-medium">Analytics</span>
+            <span className="hidden md:inline text-sm font-medium">Analytics</span>
           </Link>
           <button 
             onClick={() => setLanguage(prev => prev === 'en' ? 'kn' : 'en')}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800/80 hover:bg-slate-700 rounded-lg border border-slate-700 transition-all duration-300 shadow-sm"
+            className="flex items-center gap-2 p-2 md:px-4 md:py-2 bg-slate-800/80 hover:bg-slate-700 rounded-lg border border-slate-700 transition-all duration-300 shadow-sm"
           >
             <Globe size={16} className="text-blue-400" />
-            <span className="text-sm font-medium">{language === 'en' ? 'English' : 'ಕನ್ನಡ'}</span>
+            <span className="hidden md:inline text-sm font-medium">{language === 'en' ? 'English' : 'ಕನ್ನಡ'}</span>
           </button>
           <button 
             onClick={exportPDF}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all duration-300 shadow-[0_0_15px_rgba(37,99,235,0.4)]"
+            className="flex items-center gap-2 p-2 md:px-4 md:py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all duration-300 shadow-[0_0_15px_rgba(37,99,235,0.4)]"
           >
             <Download size={16} />
-            <span className="text-sm font-medium">Export Record</span>
+            <span className="hidden md:inline text-sm font-medium">Export</span>
           </button>
         </div>
       </header>

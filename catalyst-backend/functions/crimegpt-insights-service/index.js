@@ -3,9 +3,7 @@ const cors = require('cors');
 const neo4j = require('neo4j-driver');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-if (process.env.ZOHO_CATALYST_ENVIRONMENT === 'Development') {
-    require('dotenv').config();
-}
+require('dotenv').config({ path: 'E:\\Ksp datathon\\catalyst-backend\\.env' });
 
 const app = express();
 app.use(cors());
@@ -569,3 +567,5 @@ if (require.main === module) {
 }
 
 module.exports = app;
+
+

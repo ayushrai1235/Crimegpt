@@ -1,8 +1,8 @@
 {
     "type":  "advancedio",
-    "name":  "crimegpt-graph-service",
+    "name":  "crimegpt-insights-service",
     "deployment":  {
-                       "name":  "crimegpt-graph-service",
+                       "name":  "crimegpt-insights-service",
                        "stack":  "node20"
                    }
 }

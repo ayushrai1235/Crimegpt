@@ -1,0 +1,36 @@
+List of all 25 tables required for the Zoho Catalyst Data Store (derived from schema.sql):
+
+--- GEO & ADMIN LOOKUPS ---
+1. State
+2. District
+3. Court
+4. UnitType
+5. Unit
+
+--- PERSONNEL LOOKUPS ---
+6. Rank
+7. Designation
+8. Employee
+
+--- CLASSIFICATION LOOKUPS ---
+9. CaseCategory
+10. GravityOffence
+11. CaseStatusMaster
+12. CrimeHead
+13. CrimeSubHead
+14. Act
+15. Section
+
+--- DEMOGRAPHIC LOOKUPS ---
+16. CasteMaster
+17. ReligionMaster
+18. OccupationMaster
+
+--- CORE CASE DATA ---
+19. CaseMaster
+20. ActSectionAssociation
+21. ComplainantDetails
+22. Victim
+23. Accused
+24. ArrestSurrender
+25. ChargesheetDetails

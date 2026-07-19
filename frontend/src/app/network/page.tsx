@@ -68,24 +68,24 @@ export default function CriminalNetwork() {
             <p className="text-xs text-blue-400 uppercase tracking-widest font-semibold">Financial & Association Tracing</p>
           </div>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2 md:gap-3">
           <Link
             href="/insights"
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition shadow-sm"
+            className="flex items-center gap-2 p-2 md:px-4 md:py-2 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition shadow-sm"
           >
             <Brain size={16} className="text-amber-400" />
-            <span className="text-sm font-medium">Insights</span>
+            <span className="hidden md:inline text-sm font-medium">Insights</span>
           </Link>
           <Link
             href="/analytics"
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition shadow-sm"
+            className="flex items-center gap-2 p-2 md:px-4 md:py-2 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition shadow-sm"
           >
             <BarChart3 size={16} className="text-violet-400" />
-            <span className="text-sm font-medium">Analytics</span>
+            <span className="hidden md:inline text-sm font-medium">Analytics</span>
           </Link>
-          <button className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition shadow-sm">
+          <button className="flex items-center gap-2 p-2 md:px-4 md:py-2 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition shadow-sm">
             <Filter size={16} className="text-blue-400" />
-            <span className="text-sm font-medium">Filter Nodes</span>
+            <span className="hidden md:inline text-sm font-medium">Filter Nodes</span>
           </button>
         </div>
       </header>
